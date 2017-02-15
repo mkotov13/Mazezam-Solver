@@ -1,7 +1,7 @@
 def symbol_2_int(symbol):
     if symbol == ".":
         return 0
-    elif symbol in 'LRC':
+    elif symbol in 'LRCI':
         return 1
     elif symbol == 'P':
         return 2
@@ -11,7 +11,6 @@ def symbol_2_int(symbol):
 def read(filename):
     f = open(filename, 'rU')
     encoding = [list(line.strip('\n')) for line in f]
-    # possibly calculate the number of columns and rows
     COLUMNS, ROWS = len(encoding[0]), len(encoding)
 
     # looks for P in the first column and X in the last column
@@ -25,6 +24,7 @@ def read(filename):
     # update the position of P
     encoding[start_row][3] = 'P'
 
+    # Create an array with smaller dimensions, since the outside hashtags are irrelevant
     level = [[None] * (COLUMNS-6) for j in range(ROWS-2)]
 
     for i in range(1, ROWS-1):
@@ -35,9 +35,10 @@ def read(filename):
     for row in level:
         print row
     '''
-    return level
+    return level, finish_row-1
 
 if __name__ == "__main__":
-    level = read('level.txt')
-    for row in level:
+    level = read('levels/level2.txt')
+    for row in level[0]:
         print row
+    print level[1]
