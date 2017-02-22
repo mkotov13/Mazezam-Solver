@@ -17,9 +17,9 @@ def read(filename):
     start_row, finish_row = -1, -1
     for i in range(ROWS):
         # possibly move this inside the symbol_2_int func
-        if encoding[i][-1] == 'X':
+        if encoding[i][-3] == '*':
             finish_row = i
-        if encoding[i][0] == 'P':
+        if encoding[i][2] == '+':
             start_row = i
     # update the position of P
     encoding[start_row][3] = 'P'
@@ -35,10 +35,48 @@ def read(filename):
     for row in level:
         print row
     '''
+    # TODO: RAISE error if state matrix has any 9's
     return level, finish_row-1
 
+
+def move_left(state):
+    row = state[1]
+    col = state[2]
+    # check whether the P is in the leftmost c0olumn
+    if col < 1:
+        return False
+    else:
+        # check if there's a block to the left
+        if state[row][col-1] == 1:
+            return False
+        else:
+            state[row][col-1] = 2
+            state[row][col] = 0
+            return state, row, col-1
+
+def move_down(state):
+    row = state[1]
+    col = state[2]
+    matrix = state[0]
+    # check whether the P is in the leftmost c0olumn
+    if row == len(matrix):
+        return False
+    else:
+        # check if there's a block to the left
+        if matrix[row-1][col] == 1:
+            return False
+        else:
+            matrix[row-1][col] = 2   # reassign current player position
+            matrix[row][col] = 0     # clear player's previos position
+            return matrix, row, col-1
+
+
 if __name__ == "__main__":
-    level = read('levels/level2.txt')
+    # TODO: enquire which level should be read in
+    level = read('levels/level0.txt')
     for row in level[0]:
         print row
     print level[1]
+    print len(level[0])
+    state = (level[0], 0, 0)
+    move_down(state)
